@@ -7,11 +7,21 @@ if exists("b:current_syntax")
     finish
 endif
 
+" Module
 syn keyword eplInclude uses nextgroup=eplPackageName skipwhite
 syn keyword eplModule module nextgroup=eplPackageName skipwhite
 syn match eplPackageName '[A-Za-z.]\+' contained
 
+" Context
+syn keyword eplCreateContext create nextgroup=eplContext skipwhite
+syn keyword eplContext context nextgroup=eplContextName skipwhite
 
+syn region eplAfterCreateContext start="create context" end=";" transparent contains=eplContextName,eplContextPartitionBy
+syn match eplContextName '[A-Za-z0-9]\+' skipwhite contained
+
+syn match eplContextPartitionBy 'partition by' contained
+
+" Schema
 syn keyword eplCreateSchema create nextgroup=eplSchema skipwhite
 syn keyword eplSchema schema nextgroup=eplSchemaName skipwhite
 
@@ -23,14 +33,14 @@ syn keyword eplType string BigDecimal double long int Map contained
 
 syn keyword eplSchemaInherits inherits nextgroup=eplSchemaName skipwhite
 
-
+" Variable
 syn keyword eplCreateVariable create nextgroup=eplVariable skipwhite
 syn keyword eplVariable variable nextgroup=eplVariableName skipwhite
 
 syn region eplAfterCreateVariable start="create variable" end=";" oneline transparent contains=eplVariableName
 syn match eplVariableName '[A-Za-z]\+' contained
 
-
+" Table
 syn keyword eplCreateTable create nextgroup=eplTable skipwhite
 syn keyword eplTable table nextgroup=eplTableName skipwhite
 
@@ -41,7 +51,7 @@ syn region eplTableArgumentsBlock start="(" end=")" transparent contains=eplType
 syn keyword eplPrimary primary nextgroup=eplKey skipwhite contained
 syn keyword eplKey key contained
 
-
+" Expression
 syn keyword eplCreateExpression create nextgroup=eplExpression skipwhite
 syn keyword eplExpression expression nextgroup=eplExpressionName skipwhite
 
@@ -50,7 +60,7 @@ syn match eplExpressionName '[A-Za-z0-9]\+' nextgroup=eplExpressionArgumentsBloc
 
 syn region eplExpressionArgumentsBlock start="{" end="}" transparent contains=eplString,eplCastStatement contained
 
-
+" Dataflow
 syn keyword eplCreateDataflow create nextgroup=eplDataflow skipwhite
 syn keyword eplDataflow dataflow nextgroup=eplDataflowName skipwhite contained
 
@@ -59,7 +69,7 @@ syn match eplDataflowName '[A-Za-z0-9]\+' nextgroup=eplDataflowArgumentsBlock sk
 
 syn region eplDataflowArgumentsBlock start="dataflow" end=";" transparent contains=eplString contained
 
-
+" Window
 syn keyword eplCreateWindow create nextgroup=eplWindow skipwhite
 syn keyword eplWindow window nextgroup=eplWindowName skipwhite contained
 
@@ -68,7 +78,7 @@ syn match eplWindowName '[A-Za-z0-9]\+' nextgroup=eplWindowArgumentsBlock skipwh
 
 syn region eplWindowArgumentsBlock start="window" end=";" transparent contains=eplString contained
 
-
+" Annotation
 syn match eplAnnotation '@[^(]*'
 
 syn keyword eplInsert insert nextgroup=eplInto skipwhite
@@ -88,52 +98,68 @@ syn keyword eplCast cast contained
 syn keyword eplAs as contained
 
 syn keyword eplWhere where
+syn keyword eplHaving having
 syn keyword eplWhen when
 syn keyword eplNull null
 syn keyword eplThen then
-syn keyword eplOther select from matched delete
+syn keyword eplOther select from matched delete as
+syn match eplGroupBy 'group by'
 
 syn keyword eplNot not
 syn match eplString '\'[^']*\''
 
+syn match eplSingleLineComment "//.*$"
+syn region eplMultiLineComment start="/\*" end="\*/"
+
 let b:current_syntax = "epl"
-hi def link eplInclude          Include
-hi def link eplModule           PreProc
-hi def link eplPackageName      String
-hi def link eplSchemaName       Identifier
-hi def link eplVariableName     Type
-hi def link eplTableName        Type
-hi def link eplExpressionName   Function
-hi def link eplDataflowName     Function
-hi def link eplCreateSchema     Keyword
-hi def link eplCreateVariable   Keyword
-hi def link eplCreateTable      Keyword
-hi def link eplCreateExpression Keyword
-hi def link eplCreateDataflow   Keyword
-hi def link eplCreateWindow     Keyword
-hi def link eplWindow           Keyword
-hi def link eplDataflow         Keyword
-hi def link eplExpression       Keyword
-hi def link eplTable            Keyword
-hi def link eplSchema           Keyword
-hi def link eplVariable         Keyword
-hi def link eplPrimary          Keyword
-hi def link eplKey              Keyword
-hi def link eplType             Type
-hi def link eplOn               Conditional
-hi def link eplNull             Constant
-hi def link eplMerge            Keyword
-hi def link eplWhen             Conditional
-hi def link eplWhere            Conditional
-hi def link eplThen             Conditional
-hi def link eplInsert           Statement
-hi def link eplInto             Statement
-hi def link eplUpdate           Statement
-hi def link eplSet              Statement
-hi def link eplOther            Statement
-hi def link eplCast             Statement
-hi def link eplAs               Statement
-hi def link eplNot              Special
-hi def link eplString           String
-hi def link eplSchemaInherits   Statement
-hi def link eplAnnotation       Label
+hi def link eplInclude           Include
+hi def link eplModule            PreProc
+hi def link eplPackageName       String
+hi def link eplSchemaName        Identifier
+hi def link eplVariableName      Type
+hi def link eplTableName         Type
+hi def link eplExpressionName    Function
+hi def link eplDataflowName      Function
+
+hi def link eplCreateSchema      Keyword
+hi def link eplCreateVariable    Keyword
+hi def link eplCreateTable       Keyword
+hi def link eplCreateExpression  Keyword
+hi def link eplCreateDataflow    Keyword
+hi def link eplCreateWindow      Keyword
+
+hi def link eplContextName        Identifier
+hi def link eplCreateContext      Keyword
+hi def link eplContextPartitionBy Statement
+
+hi def link eplWindow            Keyword
+hi def link eplDataflow          Keyword
+hi def link eplExpression        Keyword
+hi def link eplTable             Keyword
+hi def link eplContext           Keyword
+hi def link eplSchema            Keyword
+hi def link eplVariable          Keyword
+hi def link eplPrimary           Keyword
+hi def link eplKey               Keyword
+hi def link eplType              Type
+hi def link eplOn                Conditional
+hi def link eplNull              Constant
+hi def link eplMerge             Keyword
+hi def link eplWhen              Conditional
+hi def link eplWhere             Conditional
+hi def link eplHaving            Conditional
+hi def link eplThen              Conditional
+hi def link eplInsert            Statement
+hi def link eplInto              Statement
+hi def link eplUpdate            Statement
+hi def link eplSet               Statement
+hi def link eplOther             Statement
+hi def link eplGroupBy           Statement
+hi def link eplCast              Statement
+hi def link eplAs                Statement
+hi def link eplNot               Special
+hi def link eplString            String
+hi def link eplSchemaInherits    Statement
+hi def link eplAnnotation        Label
+hi def link eplSingleLineComment Comment
+hi def link eplMultiLineComment  Comment
